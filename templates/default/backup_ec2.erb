@@ -24,7 +24,7 @@ mysqldump \
 --no-data \
 --user=<%= node['site-backup']['DB_USER'] %> \
 --password=<%= node['site-backup']['DB_PASSWD'] %> \
---opt $DB $TABLES > <%= node['site-backup']['BACKUP_DIR'] %>/$DB-<%= node['site-backup']['DATE'] %>
+--opt $DB $TABLES > <%= node['site-backup']['BACKUP_DIR'] %>/DB_$DB-<%= node['site-backup']['DATE'] %>
 
 #Then dump the data, except for cache and temporary tables.
 TABLES2=`echo "$TABLES" | \
@@ -37,10 +37,10 @@ mysqldump \
 --no-create-info \
 --user=<%= node['site-backup']['DB_USER'] %> \
 --password=<%= node['site-backup']['DB_PASSWD'] %> $DB $TABLES2 >> \
-           <%= node['site-backup']['BACKUP_DIR'] %>/$DB-<%= node['site-backup']['DATE'] %>
+           <%= node['site-backup']['BACKUP_DIR'] %>/DB_$DB-<%= node['site-backup']['DATE'] %>
 
 #Gzip everything
-gzip -v <%= node['site-backup']['BACKUP_DIR'] %>/$DB-<%= node['site-backup']['DATE'] %>;
+gzip -v <%= node['site-backup']['BACKUP_DIR'] %>/DB_$DB-<%= node['site-backup']['DATE'] %>;
 
 #Upload to Amazon S3
 s3cmd put <%= node['site-backup']['BACKUP_DIR'] %>/$DB-<%= node['site-backup']['DATE'] %>.gz \
@@ -59,8 +59,7 @@ do
 
 #Tar and Gzip each directory
 BASE=$(basename "$DIR");
-tar -czf <%= node['site-backup']['BACKUP_DIR'] %>/SITE_$BASE-\
-         <%= node['site-backup']['DATE'] %>.tar.gz $BASE;
+tar -czf <%= node['site-backup']['BACKUP_DIR'] %>/SITE_$BASE-<%= node['site-backup']['DATE'] %>.tar.gz $BASE;
 
 #Upload to Amazon S3
 s3cmd put <%= node['site-backup']['BACKUP_DIR'] %>/$BASE.tar.gz \
