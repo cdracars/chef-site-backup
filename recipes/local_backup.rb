@@ -8,8 +8,6 @@
 #
 # To-Do add attributes to abstract values
 
-require_recipe "s3cmd"
-
   template "/etc/cron.hourly" do
     source "backup_local.sh.erb"
     mode 0655
