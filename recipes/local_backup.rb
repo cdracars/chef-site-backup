@@ -8,7 +8,7 @@
 #
 # To-Do add attributes to abstract values
 
-  template "/etc/cron.hourly/backup_local.sh" do
-    source "backup_local.sh.erb"
+  template "/etc/cron.hourly/backup_local" do
+    source "backup_local.erb"
     mode 0655
   end

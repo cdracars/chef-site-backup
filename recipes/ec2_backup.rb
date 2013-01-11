@@ -10,7 +10,7 @@
 
 require_recipe "s3cmd"
 
-  template "/etc/cron.hourly/backup_ec2.sh" do
-    source "backup_ec2.sh.erb"
+  template "/etc/cron.hourly/backup_ec2" do
+    source "backup_ec2.erb"
     mode 0655
   end
