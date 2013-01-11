@@ -59,7 +59,8 @@ do
 
 #Tar and Gzip each directory
 BASE=$(basename "$DIR");
-tar -czf <%= node['site-backup']['BACKUP_DIR'] %>/$BASE.tar.gz $BASE;
+tar -czf <%= node['site-backup']['BACKUP_DIR'] %>/SITE_$BASE-\
+         <%= node['site-backup']['DATE'] %>.tar.gz $BASE;
 
 #Upload to Amazon S3
 #s3cmd put <%= node['site-backup']['BACKUP_DIR'] %>/$BASE.tar.gz \
