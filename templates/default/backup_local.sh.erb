@@ -1,0 +1,71 @@
+#!/bin/bash
+
+# Backup all databases to S3
+for DB in $(mysql \
+            --user=<%= node['site-backup']['DB_USER'] %> \
+            --password=<%= node['site-backup']['DB_PASSWD'] %> \
+            -e 'show databases' \
+            -s \
+            --skip-column-names|\
+            grep -Ev "^(information_schema|performance_schema|mysql)$");
+do
+
+#First dump the structures
+TABLES=`mysql \
+        --skip-column-names \
+        -e 'show tables' \
+        --user=<%= node['site-backup']['DB_USER'] %> \
+        --password=<%= node['site-backup']['DB_PASSWD'] %> ${DB}`
+
+mysqldump \
+--complete-insert \
+--disable-keys \
+--single-transaction \
+--no-data \
+--user=<%= node['site-backup']['DB_USER'] %> \
+--password=<%= node['site-backup']['DB_PASSWD'] %> \
+--opt $DB $TABLES > <%= node['site-backup']['BACKUP_DIR'] %>/$DB-<%= node['site-backup']['DATE'] %>
+
+#Then dump the data, except for cache and temporary tables.
+TABLES2=`echo "$TABLES" | \
+grep -Ev "^(accesslog|cache_.*|flood|search_.*|semaphore|sessions|watchdog)$"`
+
+mysqldump \
+--complete-insert \
+--disable-keys \
+--single-transaction \
+--no-create-info \
+--user=<%= node['site-backup']['DB_USER'] %> \
+--password=<%= node['site-backup']['DB_PASSWD'] %> $DB $TABLES2 >> \
+           <%= node['site-backup']['BACKUP_DIR'] %>/$DB-<%= node['site-backup']['DATE'] %>
+
+#Gzip everything
+gzip -v <%= node['site-backup']['BACKUP_DIR'] %>/$DB-<%= node['site-backup']['DATE'] %>;
+
+##Upload to Amazon S3
+#s3cmd put <%= node['site-backup']['BACKUP_DIR'] %>/$DB-<%= node['site-backup']['DATE'] %>.gz \
+#          <%= node['site-backup']['S3_BUCKET'] %>/databases/$DB-\
+#          <%= node['site-backup']['DATE'] %>.gz;
+#
+##Cleanup
+#rm <%= node['site-backup']['BACKUP_DIR'] %>/$DB-<%= node['site-backup']['DATE'] %>.gz;
+done
+
+# Backup all sites to S3
+cd <%= node['site-backup']['SITES_DIR'] %>;
+
+for DIR in $(find "<%= node['site-backup']['SITES_DIR'] %>" -mindepth 1 -maxdepth 1 -type d);
+do
+
+#Tar and Gzip each directory
+BASE=$(basename "$DIR");
+tar -czf <%= node['site-backup']['BACKUP_DIR'] %>/$BASE.tar.gz $BASE;
+
+#Upload to Amazon S3
+#s3cmd put <%= node['site-backup']['BACKUP_DIR'] %>/$BASE.tar.gz \
+#          <%= node['site-backup']['S3_BUCKET'] %>/sites/$BASE-\
+#          <%= node['site-backup']['DATE'] %>.tar.gz;
+#
+##Cleanup
+#rm <%= node['site-backup']['BACKUP_DIR'] %>/$BASE.tar.gz;
+done

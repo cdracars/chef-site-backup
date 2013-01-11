@@ -1,0 +1,6 @@
+default["site-backup"]["BACKUP_DIR"] = "/vagrant/working_database"
+default["site-backup"]["DB_USER"] = "root"
+default["site-backup"]["DB_PASSWD"] = "vagrant"
+default["site-backup"]["SITES_DIR"] = "/var/www"
+default["site-backup"]["S3_BUCKET"] = "usao_backups"
+default["site-backup"]["DATE"] = "$(date +%Y-%m-%d-%l)"
