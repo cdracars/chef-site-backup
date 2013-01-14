@@ -10,4 +10,4 @@ Attributes
 Usage
 =====
 
-[![Build Status](https://secure.travis-ci.org/cdracars/chef-site-backup.png)](http://travis-ci.org/cdracars/chef-site-backup)
+[![Build Status](https://secure.travis-ci.org/cdracars/chef-site-backup.png?branch=master)](http://travis-ci.org/cdracars/chef-site-backup)
