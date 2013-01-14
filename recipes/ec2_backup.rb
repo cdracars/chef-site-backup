@@ -8,7 +8,7 @@
 #
 # To-Do add attributes to abstract values
 
-require_recipe "s3cmd"
+include_recipe "s3cmd"
 
   template "/etc/cron.hourly/backup_ec2" do
     source "backup_ec2.erb"
