@@ -25,7 +25,7 @@ mysqldump \
 --user=<%= node['site-backup']['DB_USER'] %> \
 --password=<%= node['site-backup']['DB_PASSWD'] %> \
 --opt \
-$DB $TABLES > <%= node['site-backup']['BACKUP_DIR'] %>/$DB-<%= node['site-backup']['DATE'] %>
+$DB $TABLES > <%= node['site-backup']['BACKUP_DIR'] %>/DB_$DB-<%= node['site-backup']['DATE'] %>
 
 #Then dump the data, except for cache and temporary tables.
 TABLES2=`echo "$TABLES" | \
@@ -38,7 +38,7 @@ mysqldump \
 --no-create-info \
 --user=<%= node['site-backup']['DB_USER'] %> \
 --password=<%= node['site-backup']['DB_PASSWD'] %> $DB $TABLES2 >> \
-           <%= node['site-backup']['BACKUP_DIR'] %>/$DB-<%= node['site-backup']['DATE'] %>
+           <%= node['site-backup']['BACKUP_DIR'] %>/DB_$DB-<%= node['site-backup']['DATE'] %>
 
 #Gzip everything
 gzip -v <%= node['site-backup']['BACKUP_DIR'] %>/DB_$DB-<%= node['site-backup']['DATE'] %>;
