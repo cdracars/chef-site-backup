@@ -67,5 +67,10 @@ tar -czf \<%= node['site-backup']['BACKUP_DIR'] %>/SITE_$BASE-<%= node['site-bac
 #          <%= node['site-backup']['DATE'] %>.tar.gz;
 #
 ##Cleanup
+eval `date "+HOUR=%H"`
+LAST_HOUR=`expr $HOUR - 1`
+HOUR_AGO=`date +%Y-%m-%d-`$LAST_HOUR
+diff <(tar ztf \<%= node['site-backup']['BACKUP_DIR'] %>/SITE_$BASE-$HOUR_AGO.tar.gz | sort) \
+     <(tar ztf \<%= node['site-backup']['BACKUP_DIR'] %>/SITE_$BASE-<%= node['site-backup']['DATE'] %>.tar.gz | sort)
 #rm <%= node['site-backup']['BACKUP_DIR'] %>/$BASE.tar.gz;
 done
