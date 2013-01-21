@@ -42,16 +42,11 @@ mysqldump \
 #Gzip everything
 gzip -v <%= node['site-backup']['BACKUP_DIR'] %>/DB_$DB-<%= node['site-backup']['DATE'] %>;
 
-##Upload to Amazon S3
-#s3cmd put <%= node['site-backup']['BACKUP_DIR'] %>/DB_$DB-<%= node['site-backup']['DATE'] %>.gz \
-#          <%= node['site-backup']['S3_BUCKET'] %>/databases/$DB-\
-#          <%= node['site-backup']['DATE'] %>.gz;
-#
-##Cleanup
+#Cleanup
 DB_TMP1=`gunzip -c  <%= node['site-backup']['BACKUP_DIR'] %>/DB_$DB-<%= node['site-backup']['DATE_HOUR_AGO'] %> | shasum | cut -c 1-40`
 DB_TMP2=`gunzip -c  <%= node['site-backup']['BACKUP_DIR'] %>/DB_$DB-<%= node['site-backup']['DATE'] %> | shasum | cut -c 1-40`
 if [ "$DB_TMP1" == "$DB_TMP2" ]; then
-  rm <%= node['site-backup']['BACKUP_DIR'] %>/DB_$DB-<%= node['site-backup']['DATE'] %>.gz;
+  rm <%= node['site-backup']['BACKUP_DIR'] %>/DB_$DB-<%= node['site-backup']['DATE_HOUR_AGO'] %>.gz;
 fi
 done
 
@@ -65,15 +60,10 @@ do
 BASE=$(basename "$DIR");
 tar -czf \<%= node['site-backup']['BACKUP_DIR'] %>/SITE_$BASE-<%= node['site-backup']['DATE'] %>.tar.gz $BASE;
 
-#Upload to Amazon S3
-#s3cmd put <%= node['site-backup']['BACKUP_DIR'] %>/SITE_$BASE.tar.gz \
-#          <%= node['site-backup']['S3_BUCKET'] %>/sites/SITE_$BASE-\
-#          <%= node['site-backup']['DATE'] %>.tar.gz;
-#
-##Cleanup
+#Cleanup
 SITE_TMP1=`tar -tzvf <%= node['site-backup']['BACKUP_DIR'] %>/SITE_$BASE-<%= node['site-backup']['DATE_HOUR_AGO'] %>.tar.gz | shasum | cut -c 1-40`
 SITE_TMP2=`tar -tzvf  <%= node['site-backup']['BACKUP_DIR'] %>/SITE_$BASE-<%= node['site-backup']['DATE'] %>.tar.gz | shasum | cut -c 1-40`
 if [ "$SITE_TMP1" == "$SITE_TMP2" ]; then
-  rm <%= node['site-backup']['BACKUP_DIR'] %>/SITE_$BASE-<%= node['site-backup']['DATE'] %>.tar.gz;
+  rm <%= node['site-backup']['BACKUP_DIR'] %>/SITE_$BASE-<%= node['site-backup']['DATE_HOUR_AGO'] %>.tar.gz;
 fi
 done
