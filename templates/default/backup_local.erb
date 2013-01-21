@@ -50,7 +50,7 @@ gzip -v <%= node['site-backup']['BACKUP_DIR'] %>/DB_$DB-<%= node['site-backup'][
 ##Cleanup
 DB_TMP1=`gunzip -c  <%= node['site-backup']['BACKUP_DIR'] %>/DB_$DB-<%= node['site-backup']['DATE_HOUR_AGO'] %> | shasum`
 DB_TMP2=`gunzip -c  <%= node['site-backup']['BACKUP_DIR'] %>/DB_$DB-<%= node['site-backup']['DATE'] %> | shasum`
-if [ "DB_TMP1" == "$DB_TMP2" ]; then
+if [ "$DB_TMP1" == "$DB_TMP2" ]; then
   rm <%= node['site-backup']['BACKUP_DIR'] %>/$DB-<%= node['site-backup']['DATE'] %>.gz;
 fi
 done
@@ -71,5 +71,9 @@ tar -czf \<%= node['site-backup']['BACKUP_DIR'] %>/SITE_$BASE-<%= node['site-bac
 #          <%= node['site-backup']['DATE'] %>.tar.gz;
 #
 ##Cleanup
-#rm <%= node['site-backup']['BACKUP_DIR'] %>/$BASE.tar.gz;
+SITE_TMP1=`tar -tzvf <%= node['site-backup']['BACKUP_DIR'] %>/SITE_$BASE-<%= node['site-backup']['DATE_HOUR_AGO'] %> | shasum`
+SITE_TMP2=`tar -tzvf  <%= node['site-backup']['BACKUP_DIR'] %>/SITE_$BASE-<%= node['site-backup']['DATE'] %> | shasum`
+if [ "$SITE_TMP1" == "$SITE_TMP2" ]; then
+  rm <%= node['site-backup']['BACKUP_DIR'] %>/SITE_$BASE-<%= node['site-backup']['DATE'] %>.gz;
+fi
 done
