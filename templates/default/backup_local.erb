@@ -48,7 +48,11 @@ gzip -v <%= node['site-backup']['BACKUP_DIR'] %>/DB_$DB-<%= node['site-backup'][
 #          <%= node['site-backup']['DATE'] %>.gz;
 #
 ##Cleanup
-#rm <%= node['site-backup']['BACKUP_DIR'] %>/$DB-<%= node['site-backup']['DATE'] %>.gz;
+DB_TMP1=`gunzip -c  <%= node['site-backup']['BACKUP_DIR'] %>/DB_$DB-<%= node['site-backup']['DATE_HOUR_AGO'] %> | shasum`
+DB_TMP2=`gunzip -c  <%= node['site-backup']['BACKUP_DIR'] %>/DB_$DB-<%= node['site-backup']['DATE'] %> | shasum`
+if [ "DB_TMP1" == "$DB_TMP2" ]; then
+  rm <%= node['site-backup']['BACKUP_DIR'] %>/$DB-<%= node['site-backup']['DATE'] %>.gz;
+fi
 done
 
 # Backup all sites to S3
