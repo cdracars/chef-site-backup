@@ -66,14 +66,14 @@ BASE=$(basename "$DIR");
 tar -czf \<%= node['site-backup']['BACKUP_DIR'] %>/SITE_$BASE-<%= node['site-backup']['DATE'] %>.tar.gz $BASE;
 
 #Upload to Amazon S3
-#s3cmd put <%= node['site-backup']['BACKUP_DIR'] %>/$BASE.tar.gz \
-#          <%= node['site-backup']['S3_BUCKET'] %>/sites/$BASE-\
+#s3cmd put <%= node['site-backup']['BACKUP_DIR'] %>/SITE_$BASE.tar.gz \
+#          <%= node['site-backup']['S3_BUCKET'] %>/sites/SITE_$BASE-\
 #          <%= node['site-backup']['DATE'] %>.tar.gz;
 #
 ##Cleanup
-SITE_TMP1=`tar -tzvf <%= node['site-backup']['BACKUP_DIR'] %>/SITE_$BASE-<%= node['site-backup']['DATE_HOUR_AGO'] %> | shasum`
-SITE_TMP2=`tar -tzvf  <%= node['site-backup']['BACKUP_DIR'] %>/SITE_$BASE-<%= node['site-backup']['DATE'] %> | shasum`
+SITE_TMP1=`tar -tzvf <%= node['site-backup']['BACKUP_DIR'] %>/SITE_$BASE-<%= node['site-backup']['DATE_HOUR_AGO'] %>.tar.gz | shasum`
+SITE_TMP2=`tar -tzvf  <%= node['site-backup']['BACKUP_DIR'] %>/SITE_$BASE-<%= node['site-backup']['DATE'] %>.tar.gz | shasum`
 if [ "$SITE_TMP1" == "$SITE_TMP2" ]; then
-  rm <%= node['site-backup']['BACKUP_DIR'] %>/SITE_$BASE-<%= node['site-backup']['DATE'] %>.gz;
+  rm <%= node['site-backup']['BACKUP_DIR'] %>/SITE_$BASE-<%= node['site-backup']['DATE'] %>.tar.gz;
 fi
 done
