@@ -1,4 +1,3 @@
-name             "site-backup"
 maintainer       "Cody Dracars"
 maintainer_email "cdracars@gmail.com"
 license          "All rights reserved"
